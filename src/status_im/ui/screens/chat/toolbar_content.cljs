@@ -32,25 +32,36 @@
         (i18n/label :chat-is-not-a-contact))]]))
 
 (defview toolbar-content-view []
-  (letsubs [{:keys [group-chat
-                    invitation-admin
-                    color
-                    chat-id
-                    contacts
-                    chat-name
-                    public?]}
-            [:chats/current-chat]]
+  (let [{:keys [group-chat
+                invitation-admin
+                color
+                chat-id
+                contacts
+                chat-name
+                public?]}
+        @(re-frame/subscribe [:chats/current-chat])
+        current-pk @(re-frame/subscribe [:multiaccount/public-key])
+        self-chat (= chat-id current-pk)]
     [react/view {:style st/toolbar-container}
      [react/view {:margin-right 10}
-      [chat-icon.screen/chat-icon-view-toolbar chat-id group-chat chat-name color]]
+      [chat-icon.screen/chat-icon-view-toolbar chat-id self-chat group-chat chat-name color]]
      [react/view {:style st/chat-name-view}
-      (if group-chat
+      (cond 
+        group-chat
         [react/text {:style               st/chat-name-text
                      :number-of-lines     1
                      :accessibility-label :chat-name-text}
          chat-name]
+        
+        self-chat
+        [react/text {:style               st/chat-name-text
+                     :number-of-lines     1
+                     :accessibility-label :chat-name-text}
+         "Notes"]
+        
+        :else
         [one-to-one-name chat-id])
-      (when-not group-chat
+      (when-not (or group-chat self-chat)
         [contact-indicator chat-id])
       (when (and group-chat (not invitation-admin))
         [group-last-activity {:contacts   contacts

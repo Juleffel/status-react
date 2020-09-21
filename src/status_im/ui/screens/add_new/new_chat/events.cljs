@@ -50,6 +50,8 @@
                                              :searching
                                              (and (string/blank? new-identity) (not new-ens-name))
                                              :empty
+                                             (= error :yourself)
+                                             :yourself
                                              error
                                              :error
                                              :else

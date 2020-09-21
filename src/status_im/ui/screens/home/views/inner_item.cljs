@@ -130,15 +130,16 @@
                      :height          15
                      :margin-right   2}})
 
-(defn home-list-item [home-item]
+(defn home-list-item [home-item current-pk]
   (let [{:keys [chat-id chat-name color online group-chat
                 public? timestamp last-message muted]}
         home-item
+        self-chat (= chat-id current-pk)
         private-group? (and group-chat (not public?))
         public-group?  (and group-chat public?)]
     [quo/list-item
      {:icon                      [chat-icon.screen/chat-icon-view-chat-list
-                                  chat-id group-chat chat-name color online false]
+                                  chat-id self-chat group-chat chat-name color online false]
       :title                     [react/view {:flex-direction :row
                                               :flex           1}
                                   [react/view {:flex-direction :row
@@ -148,6 +149,8 @@
                                    (cond
                                      muted
                                      [icons/icon :main-icons/tiny-muted (assoc (icon-style) :color colors/gray)]
+                                     self-chat
+                                     nil
                                      private-group?
                                      [icons/icon :main-icons/tiny-group (icon-style)]
                                      public-group?
@@ -159,8 +162,14 @@
                                               :accessibility-label :chat-name-text
                                               :ellipsize-mode      :tail
                                               :number-of-lines     1}
-                                    (if group-chat
+                                    (cond
+                                      group-chat
                                       (utils/truncate-str chat-name 30)
+
+                                      self-chat
+                                      "Notes"
+
+                                      :else
                                       ;; This looks a bit odd, but I would like only to subscribe
                                       ;; if it's a one-to-one. If wrapped in a component styling
                                       ;; won't be applied correctly.

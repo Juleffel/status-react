@@ -46,7 +46,7 @@
       [icon-wrapper colors/gray
        [react/activity-indicator {:color colors/white-persist}]]
 
-      :valid
+      (:yourself :valid)
       [react/touchable-highlight
        {:on-press #(debounce/dispatch-and-chill [:contact.ui/contact-code-submitted new-contact? entered-nickname] 3000)}
        [icon-wrapper colors/blue
@@ -102,6 +102,9 @@
                  :color :secondary}
        (cond (= state :error)
              (get-validation-label error)
+
+             (= state :yourself)
+             "That's you. Continue to start a notebook"
 
              (= state :valid)
              (str (if ens-name

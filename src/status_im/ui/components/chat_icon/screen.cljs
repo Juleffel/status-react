@@ -5,9 +5,14 @@
             [status-im.ui.components.chat-icon.styles :as styles]
             [status-im.ui.components.colors :as colors]
             [status-im.ui.components.react :as react]
+            [status-im.ui.components.icons.vector-icons :as icons]
             [status-im.ui.screens.chat.photos :as photos]))
 
 ;;TODO REWORK THIS NAMESPACE
+
+(defn self-chat-icon [styles]
+  [react/view (:self-chat-icon styles)
+   [icons/icon :main-icons/text (:self-chat-icon-text styles)]])
 
 (defn default-chat-icon [name styles]
   (when-not (string/blank? name)
@@ -31,16 +36,22 @@
      [react/view online-dot-right]]]])
 
 (defn chat-icon-view
-  [chat-id group-chat name styles]
+  [chat-id self-chat group-chat name styles]
   [react/view (:container styles)
-   (if group-chat
+   (cond
+     group-chat
      [default-chat-icon name styles]
+     
+     self-chat
+     [self-chat-icon styles]
+     
+     :else
      (let [photo-path @(re-frame.core/subscribe [:chats/photo-path chat-id])]
        [photos/photo photo-path styles]))])
 
 (defn chat-icon-view-toolbar
-  [chat-id group-chat name color]
-  [chat-icon-view chat-id group-chat name
+  [chat-id self-chat group-chat name color]
+  [chat-icon-view chat-id self-chat group-chat name
    {:container              styles/container-chat-toolbar
     :online-view-wrapper    styles/online-view-wrapper
     :online-view            styles/online-view
@@ -48,12 +59,14 @@
     :online-dot-right       styles/online-dot-right
     :size                   36
     :chat-icon              styles/chat-icon-chat-toolbar
+    :self-chat-icon         (styles/self-chat-icon 36)
+    :self-chat-icon-text    (styles/self-chat-icon-text 36)
     :default-chat-icon      (styles/default-chat-icon-chat-toolbar color)
     :default-chat-icon-text (styles/default-chat-icon-text 36)}])
 
 (defn chat-icon-view-chat-list
-  [chat-id group-chat name color]
-  [chat-icon-view chat-id group-chat name
+  [chat-id self-chat group-chat name color]
+  [chat-icon-view chat-id self-chat group-chat name
    {:container              styles/container-chat-list
     :online-view-wrapper    styles/online-view-wrapper
     :online-view            styles/online-view
@@ -61,12 +74,14 @@
     :online-dot-right       styles/online-dot-right
     :size                   40
     :chat-icon              styles/chat-icon-chat-list
+    :self-chat-icon         (styles/self-chat-icon 40)
+    :self-chat-icon-text    (styles/self-chat-icon-text 40)
     :default-chat-icon      (styles/default-chat-icon-chat-list color)
     :default-chat-icon-text (styles/default-chat-icon-text 40)}])
 
 (defn chat-icon-view-chat-sheet
   [chat-id group-chat name color]
-  [chat-icon-view chat-id group-chat name
+  [chat-icon-view chat-id false group-chat name
    {:container              styles/container-chat-list
     :online-view-wrapper    styles/online-view-wrapper
     :online-view            styles/online-view
@@ -108,9 +123,15 @@
     :default-chat-icon      (styles/default-chat-icon-profile colors/default-chat-color size)
     :default-chat-icon-text (styles/default-chat-icon-text size)}])
 
-(defn chat-intro-icon-view [icon-text chat-id group-chat styles]
-  (if group-chat
+(defn chat-intro-icon-view [icon-text chat-id self-chat group-chat styles]
+  (cond
+    group-chat
     [default-chat-icon icon-text styles]
+    
+    self-chat
+    [self-chat-icon styles]
+    
+    :else
     (let [photo-path @(re-frame.core/subscribe [:chats/photo-path chat-id])]
       (if-not (string/blank? photo-path)
         [photos/photo photo-path styles]))))

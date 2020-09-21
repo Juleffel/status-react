@@ -63,6 +63,9 @@
 (def blue-light (:blue-light light))                        ;; Light Blue
 (def blue-transparent-10 (alpha blue 0.1))                  ;; unknown
 
+;; CYAN
+(def cyan "#51d0f0")                                        ;; Cyan, used for Notes icon
+
 ;; RED
 (def red (:red light))                                      ;; Used to highlight errors or "dangerous" actions
 (def red-transparent-10 (alpha red 0.1))                    ;;action-row ;; ttt finish

@@ -134,7 +134,8 @@
 (views/defview chats-list []
   (views/letsubs [loading? [:chats/loading?]
                   {:keys [chats search-filter]} [:home-items]
-                  {:keys [hide-home-tooltip?]} [:multiaccount]]
+                  {:keys [hide-home-tooltip?]} [:multiaccount]
+                  current-pk [:multiaccount/public-key]]
     (if loading?
       [react/view {:flex 1 :align-items :center :justify-content :center}
        [react/activity-indicator {:animating true}]]
@@ -147,7 +148,7 @@
          {:key-fn                       :chat-id
           :keyboard-should-persist-taps :always
           :data                         chats
-          :render-fn                    (fn [home-item] [inner-item/home-list-item home-item])
+          :render-fn                    (fn [home-item] [inner-item/home-list-item home-item current-pk])
           :header                       (when (or (seq chats) @search-active? (seq search-filter))
                                           [search-input-wrapper search-filter chats])
           :empty-component              (when (or @search-active? (seq search-filter))

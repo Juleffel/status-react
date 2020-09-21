@@ -69,6 +69,14 @@
    :opacity     0.8
    :line-height 72})
 
+(defn intro-header-icon-notes [diameter]
+  (intro-header-icon diameter colors/cyan))
+
+(def intro-header-icon-notes-text
+  {:color  colors/white
+   :width  62
+   :height 62})
+
 (defn intro-header-chat-name []
   {:font-size         22
    :font-weight       "700"

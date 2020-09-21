@@ -50,6 +50,27 @@
        :icon                :main-icons/delete
        :on-press            #(re-frame/dispatch [:chat.ui/remove-chat-pressed chat-id])}]]))
 
+(defn self-chat-accents [{:keys [chat-id]}]
+  [react/view
+    [quo/list-item
+    {:theme               :accent
+      :title               (i18n/label :t/clear-history)
+      :accessibility-label :clear-history-button
+      :icon                :main-icons/close
+      :on-press            #(re-frame/dispatch [:chat.ui/clear-history-pressed chat-id])}]
+    [quo/list-item
+    {:theme               :accent
+      :title               (i18n/label :t/fetch-history)
+      :accessibility-label :fetch-history-button
+      :icon                :main-icons/arrow-down
+      :on-press            #(hide-sheet-and-dispatch [:chat.ui/fetch-history-pressed chat-id])}]
+    [quo/list-item
+    {:theme               :negative
+      :title               (i18n/label :t/delete-chat)
+      :accessibility-label :delete-chat-button
+      :icon                :main-icons/delete
+      :on-press            #(re-frame/dispatch [:chat.ui/remove-chat-pressed chat-id])}]])
+
 (defn public-chat-accents [{:keys [chat-id]}]
   (let [link    (universal-links/generate-link :public-chat :external chat-id)
         message (i18n/label :t/share-public-chat-text {:link link})]
@@ -136,8 +157,9 @@
              :on-press            #(re-frame/dispatch [:group-chats.ui/leave-chat-pressed chat-id])}])]))))
 
 (defn actions [{:keys [public? group-chat]
-                :as current-chat}]
+                :as current-chat} self-chat]
   (cond
+    self-chat  [self-chat-accents current-chat]
     public?    [public-chat-accents current-chat]
     group-chat [group-chat-accents current-chat]
     :else      [one-to-one-chat-accents current-chat]))

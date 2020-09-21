@@ -250,14 +250,12 @@
 (fx/defn start-chat
   "Start a chat, making sure it exists"
   [{:keys [db] :as cofx} chat-id]
-  ;; don't allow to open chat with yourself
-  (when (not= (multiaccounts.model/current-public-key cofx) chat-id)
-    (fx/merge cofx
-              (upsert-chat {:chat-id   chat-id
-                            :is-active true}
-                           nil)
-              (transport.filters/load-chat chat-id)
-              (navigate-to-chat chat-id))))
+  (fx/merge cofx
+            (upsert-chat {:chat-id   chat-id
+                          :is-active true}
+                          nil)
+            (transport.filters/load-chat chat-id)
+            (navigate-to-chat chat-id)))
 
 (fx/defn start-public-chat
   "Starts a new public chat"

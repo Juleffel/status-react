@@ -34,6 +34,17 @@
    :font-size   (/ size 2)
    :line-height size})
 
+(defn self-chat-icon [size]
+  (merge (default-chat-icon colors/cyan)
+         {:width         size
+          :height        size
+          :border-radius (/ size 2)}))
+
+(defn self-chat-icon-text [size]
+  {:color  colors/white
+   :width  (/ size 2)
+   :height (/ size 2)})
+
 (def chat-icon
   {:margin        4
    :border-radius 20
